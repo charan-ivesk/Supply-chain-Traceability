@@ -417,6 +417,12 @@ function queryChaincode() {
 
 # Tear down running network
 function networkDown() {
+  
+  WALLET_PATH="../my-fabric-app/wallet"
+    if [ -d "$WALLET_PATH" ]; then
+        rm -rf "$WALLET_PATH"
+        echo "Removed wallet folder at $WALLET_PATH"
+    fi
   local temp_compose=$COMPOSE_FILE_BASE
   COMPOSE_FILE_BASE=compose-bft-test-net.yaml
   COMPOSE_BASE_FILES="-f compose/${COMPOSE_FILE_BASE} -f compose/${CONTAINER_CLI}/${CONTAINER_CLI}-${COMPOSE_FILE_BASE}"
