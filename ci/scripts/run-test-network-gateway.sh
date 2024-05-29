@@ -3,7 +3,7 @@
 set -euo pipefail
 
 CHAINCODE_LANGUAGE=${CHAINCODE_LANGUAGE:-go}
-CHAINCODE_PATH=${CHAINCODE_PATH:-../asset-transfer-basic}
+CHAINCODE_PATH=${CHAINCODE_PATH:-../agro-supply-chain}
 
 function print() {
 	GREEN='\033[0;32m'
@@ -42,8 +42,8 @@ createNetwork
 print "Initializing Go gateway application"
 export CHAINCODE_NAME=go_gateway
 deployChaincode
-pushd ../asset-transfer-basic/application-gateway-go
-print "Executing AssetTransfer.go"
+pushd ../agro-supply-chain/application-gateway-go
+print "Executing ASCTP.go"
 go run .
 popd
 
@@ -52,7 +52,7 @@ popd
 print "Initializing Typescript gateway application"
 export CHAINCODE_NAME=typescript_gateway
 deployChaincode
-pushd ../asset-transfer-basic/application-gateway-typescript
+pushd ../agro-supply-chain/application-gateway-typescript
 npm install
 print "Building app.ts"
 npm run build
@@ -65,7 +65,7 @@ popd
 print "Initializing Java application"
 export CHAINCODE_NAME=java_gateway
 deployChaincode
-pushd ../asset-transfer-basic/application-gateway-java
+pushd ../agro-supply-chain/application-gateway-java
 print "Executing Gradle Run"
 ./gradlew run
 popd

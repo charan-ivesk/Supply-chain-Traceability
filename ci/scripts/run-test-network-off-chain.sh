@@ -3,7 +3,7 @@
 set -euo pipefail
 
 CHAINCODE_LANGUAGE=${CHAINCODE_LANGUAGE:-go}
-CHAINCODE_PATH=${CHAINCODE_PATH:-../asset-transfer-basic}
+CHAINCODE_PATH=${CHAINCODE_PATH:-../agro-supply-chain}
 
 function print() {
 	GREEN='\033[0;32m'

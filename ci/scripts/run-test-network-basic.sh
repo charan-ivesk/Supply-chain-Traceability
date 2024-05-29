@@ -3,7 +3,7 @@
 set -euo pipefail
 
 CHAINCODE_LANGUAGE=${CHAINCODE_LANGUAGE:-go}
-CHAINCODE_PATH=${CHAINCODE_PATH:-../asset-transfer-basic}
+CHAINCODE_PATH=${CHAINCODE_PATH:-../agro-supply-chain}
 
 function print() {
 	GREEN='\033[0;32m'
@@ -42,8 +42,8 @@ createNetwork
 print "Initializing Go application"
 export CHAINCODE_NAME=basic_${CHAINCODE_LANGUAGE}_for_go_app
 deployChaincode
-pushd ../asset-transfer-basic/application-go
-print "Executing AssetTransfer.go"
+pushd ../agro-supply-chain/application-go
+print "Executing ASCTP.go"
 go run .
 popd
 
@@ -51,7 +51,7 @@ popd
 print "Initializing Java application"
 export CHAINCODE_NAME=basic_${CHAINCODE_LANGUAGE}_for_java_app
 deployChaincode
-pushd ../asset-transfer-basic/application-java
+pushd ../agro-supply-chain/application-java
 print "Executing Gradle Run"
 gradle run
 popd
@@ -60,7 +60,7 @@ popd
 print "Initializing Javascript application"
 export CHAINCODE_NAME=basic_${CHAINCODE_LANGUAGE}_for_javascript_app
 deployChaincode
-pushd ../asset-transfer-basic/application-javascript
+pushd ../agro-supply-chain/application-javascript
 npm install
 print "Executing app.js"
 node app.js
@@ -70,7 +70,7 @@ popd
 print "Initializing Typescript application"
 export CHAINCODE_NAME=basic_${CHAINCODE_LANGUAGE}_for_typescript_app
 deployChaincode
-pushd ../asset-transfer-basic/application-typescript
+pushd ../agro-supply-chain/application-typescript
 npm install
 print "Building app.ts"
 npm run build

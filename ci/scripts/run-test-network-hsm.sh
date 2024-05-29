@@ -3,7 +3,7 @@
 set -euo pipefail
 
 CHAINCODE_LANGUAGE=${CHAINCODE_LANGUAGE:-go}
-CHAINCODE_PATH=${CHAINCODE_PATH:-../asset-transfer-basic}
+CHAINCODE_PATH=${CHAINCODE_PATH:-../agro-supply-chain}
 
 function print() {
 	GREEN='\033[0;32m'
@@ -39,7 +39,7 @@ createNetwork
 print "Initializing Typescript HSM application"
 export CHAINCODE_NAME=typescript_hsm
 deployChaincode
-pushd ../asset-transfer-basic/application-typescript-hsm
+pushd ../agro-supply-chain/application-typescript-hsm
 print "Setup SoftHSM"
 export SOFTHSM2_CONF=$PWD/softhsm2.conf
 print "install dependencies"
