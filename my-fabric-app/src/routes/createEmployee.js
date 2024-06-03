@@ -55,6 +55,7 @@ router.post('/', async (req, res) => {
     const currentDate = new Date();
     const formattedDate = currentDate.toISOString().slice(0, 19) + 'Z';
     value.created_at=formattedDate;
+    value.status="CREATED"
 
     await contract.submitTransaction('writeData', str, JSON.stringify(value));
     console.log('Transaction has been submitted');
