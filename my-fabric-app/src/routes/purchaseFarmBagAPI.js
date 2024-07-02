@@ -34,26 +34,22 @@ router.post('/', async (req, res) => {
         const contract = network.getContract('asctp');
 
         const farmbag_id = req.body.farmbag_id;
-        const supplier_id = req.body.supplier_id;
+        const purchase_id = req.body.purchase_id;
         const value = req.body.value;
 
-        if (!farmbag_id || !value || !supplier_id) {
-            return res.status(400).json({ error: 'farmbag_id, supplier_id and Value are required in the request body' });
+        if (!farmbag_id || !value || !purchase_id) {
+            return res.status(400).json({ error: 'farmbag_id, purchase_id and Value are required in the request body' });
         }
 
-        let str1 =JSON.stringify(supplier_id)
+        let str1 =JSON.stringify(purchase_id)
         str1=str1.slice(1,str1.length-1)
-        str1="SP_"+str1
+        str1="PU_"+str1
   
         const reply1 = await contract.evaluateTransaction('queryByID', str1);
 
         const result1 =JSON.parse(reply1.toString())
         if (result1.length==0){
-            return res.status(400).json({ error: 'Supplier does not exist' });
-        }
-        let input1=result1[0]
-        if(input1.value.status=="DEACTIVATED"){
-            return res.status(400).json({ error: 'Supplier has been deactivated' });
+            return res.status(400).json({ error: 'purchase does not exist' });
         }
 
 
@@ -65,11 +61,9 @@ router.post('/', async (req, res) => {
         const formattedDate = currentDate.toISOString().slice(0, 19) + 'Z';
 
         value.created_at=formattedDate
-        graintype=value.grain
-        if (!value.grain){
-        value.grain=input1.value.grain
-    }
-        value.status="UNUSED"
+
+
+        value.status="PURCHASED"
         const result = await contract.evaluateTransaction('queryByID', str);
         let check=result.toString()
         if (check.length>2){
@@ -90,13 +84,39 @@ router.post('/', async (req, res) => {
         let input2=result2[0]
         if(input2.value.status=="USED"){
             return res.status(400).json({ error: 'QR has already been used' });
+
         }
+
+        const farmbaglist=[farmbag_id]
+        let input1=result1[0]
+        if (input1.value.hasOwnProperty("farmerBag_ids")) {
+            let con_FBList=input1.value.farmerBag_ids.concat(farmbaglist)
+            input1.value.farmerBag_ids=con_FBList
+        }
+        else{
+            input1.value.farmerBag_ids=farmbaglist
+        }
+
+        if (input1.value.hasOwnProperty("farmerBag_ids_check")) {
+            let con_FBList=input1.value.farmerBag_ids_check.concat(farmbaglist)
+            input1.value.farmerBag_ids_check=con_FBList
+        }
+        else{
+            input1.value.farmerBag_ids_check=farmbaglist
+        }
+
+        input1.value.updated_at=formattedDate
+
+        value.produce_id=input1.value.produce_id
 
         await contract.submitTransaction('writeData', str, JSON.stringify(value));
         const value2 = req.body.value;
         value2.updated_at=formattedDate
         value2.status="USED"
         await contract.submitTransaction('writeData', str2, JSON.stringify(value2));
+        console.log('Transaction has been submitted');
+
+        await contract.submitTransaction('writeData', str1, JSON.stringify(input1.value));
         console.log('Transaction has been submitted');
 
         // Disconnect from the gateway.

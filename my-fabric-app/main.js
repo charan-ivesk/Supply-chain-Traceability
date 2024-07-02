@@ -51,6 +51,9 @@ const editSupplierRouter = require('./src/routes/editSupplier');
 const generateQRRouter = require('./src/routes/generateQR');
 const assignEmployeeRouter = require('./src/routes/assignEmployee');
 const allQRRouter = require('./src/routes/allQR');
+const getFBRouter = require('./src/routes/getFB');
+const createProduceRouter = require('./src/routes/createProduce');
+
 
 
 app.use('/api/addFarmBagToBatch', addFarmBagToBatchRouter);
@@ -97,7 +100,8 @@ app.use('/api/editSupplier', editSupplierRouter);
 app.use('/api/generateQR', generateQRRouter);
 app.use('/api/assignEmployee', assignEmployeeRouter);
 app.use('/api/allQR', allQRRouter);
-
+app.use('/api/getFB', getFBRouter);
+app.use('/api/createProduce', createProduceRouter);
 
 
 

@@ -36,10 +36,11 @@ router.post('/', async (req, res) => {
         const { v4: uuidv4 } = require('uuid');
         const purchase_id = uuidv4();
         const supplier_id = req.body.supplier_id;
+        const produce_id = req.body.produce_id;
         const value = req.body.value;
 
-        if (!value || !supplier_id) {
-            return res.status(400).json({ error: 'supplier_id and Value are required in the request body' });
+        if (!value || !supplier_id || !produce_id) {
+            return res.status(400).json({ error: 'supplier_id, produce_id and Value are required in the request body' });
         }
 
         let str=JSON.stringify(purchase_id)
@@ -69,7 +70,19 @@ router.post('/', async (req, res) => {
             return res.status(400).json({ error: 'Supplier has been deactivated' });
         }
 
-        
+        let str4 =JSON.stringify(produce_id)
+        str4=str4.slice(1,str4.length-1)
+        str4="PD_"+str4
+  
+        const reply4 = await contract.evaluateTransaction('queryByID', str4);
+
+
+        const result4 =JSON.parse(reply4.toString())
+        console.log(reply4)
+        if (result4.length==0){
+            return res.status(400).json({ error: 'produce does not exist' });
+        }
+
         const currentDate = new Date();
         const formattedDate = currentDate.toISOString().slice(0, 19) + 'Z';
         value.created_at=formattedDate
@@ -89,6 +102,7 @@ router.post('/', async (req, res) => {
         await contract.submitTransaction('writeData', str1, JSON.stringify(input1.value));
 
         value.supplier_id=supplier_id
+        value.produce_id=produce_id
         value.status="CREATED"
         await contract.submitTransaction('writeData', str, JSON.stringify(value));
         console.log('Transaction has been submitted');
