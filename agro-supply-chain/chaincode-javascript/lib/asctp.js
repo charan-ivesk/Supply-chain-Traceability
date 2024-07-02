@@ -36,13 +36,14 @@ class ASCTP extends Contract {
        return result
     }    
 
-    async queryValidFB(ctx, g_type){
+    async queryValidFB(ctx, g_id, f_id ){
         let queryString ={}
         queryString.selector={
             "_id": {
                 "$regex": "FB_"
              },
-            "grain":g_type,
+            "produce_id":g_id,
+            "facility_id":f_id,
             "status":"RECEIVED"
         }
         let iterator = await ctx.stub.getQueryResult(JSON.stringify(queryString))
@@ -50,20 +51,7 @@ class ASCTP extends Contract {
         return result
      } 
 
-    async queryValidFB(ctx, g_type){
-        let queryString ={}
-        queryString.selector={
-            "_id": {
-                "$regex": "FB_"
-             },
-            "grain":g_type,
-            "status":"RECEIVED"
-        }
-        let iterator = await ctx.stub.getQueryResult(JSON.stringify(queryString))
-        let result = await this.getIteratorData(iterator)
-        return result
-    } 
-     
+
     async queryValidZFB(ctx){
         let queryString ={}
         queryString.selector={
