@@ -34,8 +34,10 @@ router.post('/', async (req, res) => {
         const contract = network.getContract('asctp');
         const farmbaglist = req.body.farmbaglist;
 
-        if (!farmbaglist) {
-            return res.status(400).json({ error: 'farmbaglist is required in the request body' });
+        const employee_id=req.body.employee_id;
+
+        if (!farmbaglist || !employee_id) {
+            return res.status(400).json({ error: 'farmbaglist  and employee_id are required in the request body' });
         }
         
         for (var i=0;i<farmbaglist.length;i++){
@@ -53,6 +55,18 @@ router.post('/', async (req, res) => {
 
         }
 
+        let str7 =JSON.stringify(employee_id)
+        str7=str7.slice(1,str7.length-1)
+        str7="EM_"+str7
+        const reply7= await contract.evaluateTransaction('queryByID', str7);
+        const result7=JSON.parse(reply7.toString()) 
+        if (result7.length==0){
+            return res.status(400).json({ error: 'Employee'+str7+'does not exist' });
+        }
+        else if("status" in result7[0].value && result7[0].value.status=="DEACTIVATED"){
+            return res.status(400).json({ error: 'employee '+str7+' has been deactivated' });
+        }  
+
         for (var i=0;i<farmbaglist.length;i++){
             
             let str =JSON.stringify(farmbaglist[i])
@@ -68,6 +82,7 @@ router.post('/', async (req, res) => {
             result[0].value.updated_at=formattedDate
             result[0].value.status="RECEIVED"
             purchase_id=result[0].value.purchase_id
+            result[0].value.facility_id=result7[0].value.facility_id
 
             await contract.submitTransaction('writeData', str, JSON.stringify(result[0].value));
             let num= (i+1).toString()

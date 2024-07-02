@@ -108,6 +108,7 @@ router.post('/', async (req, res) => {
         input1.value.updated_at=formattedDate
 
         value.produce_id=input1.value.produce_id
+        value.purchase_id=purchase_id
 
         await contract.submitTransaction('writeData', str, JSON.stringify(value));
         const value2 = req.body.value;

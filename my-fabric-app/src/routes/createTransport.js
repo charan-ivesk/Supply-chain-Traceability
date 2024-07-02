@@ -48,11 +48,6 @@ router.post('/', async (req, res) => {
     str=str.slice(1,str.length-1)
     str="TR_"+str
     
-    const result1 = await contract.evaluateTransaction('queryByID', str);
-    let check=result1.toString()
-    if (check.length>2){
-        return res.status(400).json({ error: 'Transport '+str+' already exists' });
-    }
 
     let str10=JSON.stringify(driver_id)
     str10=str10.slice(1,str10.length-1)

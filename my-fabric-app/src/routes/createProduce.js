@@ -43,12 +43,6 @@ router.post('/', async (req, res) => {
     let str=JSON.stringify(produce_id)
     str=str.slice(1,str.length-1)
     str="PD_"+str
-
-    const result1 = await contract.evaluateTransaction('queryByID', str);
-    let check=result1.toString()
-    if (check.length>2){
-        return res.status(400).json({ error: 'produce '+str+' already exists' });
-    }
     
     const currentDate = new Date();
     const formattedDate = currentDate.toISOString().slice(0, 19) + 'Z';

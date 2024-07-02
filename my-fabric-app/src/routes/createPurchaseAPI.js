@@ -36,6 +36,7 @@ router.post('/', async (req, res) => {
         const { v4: uuidv4 } = require('uuid');
         const purchase_id = uuidv4();
         const supplier_id = req.body.supplier_id;
+        console.log(supplier_id)
         const produce_id = req.body.produce_id;
         const value = req.body.value;
 
@@ -46,12 +47,6 @@ router.post('/', async (req, res) => {
         let str=JSON.stringify(purchase_id)
         str=str.slice(1,str.length-1)
         str="PU_"+str
-
-        const result = await contract.evaluateTransaction('queryByID', str);
-        let check=result.toString()
-        if (check.length>2){
-            return res.status(400).json({ error: 'Purchase '+str+' already exists' });
-        }
 
         let str1 =JSON.stringify(supplier_id)
         str1=str1.slice(1,str1.length-1)

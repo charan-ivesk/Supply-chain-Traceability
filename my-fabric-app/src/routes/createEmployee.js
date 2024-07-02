@@ -46,11 +46,6 @@ router.post('/', async (req, res) => {
     str=str.slice(1,str.length-1)
     str="EM_"+str
 
-    const result1 = await contract.evaluateTransaction('queryByID', str);
-    let check=result1.toString()
-    if (check.length>2){
-        return res.status(400).json({ error: 'employee '+str+' already exists' });
-    }
     
     const currentDate = new Date();
     const formattedDate = currentDate.toISOString().slice(0, 19) + 'Z';
