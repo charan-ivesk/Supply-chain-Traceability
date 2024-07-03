@@ -36,7 +36,7 @@ router.post('/', async (req, res) => {
     // Evaluate the specified transaction with the provided purchase_id.
     const transport_id = req.body.transport_id;
     const driver_id=req.body.new_driver_id
-    const destination= req.body.new_destination;
+    const destination= req.body.new_destination_id;
 
     if (!transport_id) {
         return res.status(400).json({ error: 'transport_id is required in the request body' });

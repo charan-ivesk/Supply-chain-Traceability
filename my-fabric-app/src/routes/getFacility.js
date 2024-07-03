@@ -33,14 +33,14 @@ router.post('/', async (req, res) => {
     // Get the contract from the network.
     const contract = network.getContract('asctp');
 
-    // Evaluate the specified transaction with the provided farmbag_id.
-    const farmbag_id = req.body.farmbag_id;
-    if (!farmbag_id) {
-      return res.status(400).json({ error: 'Missing farmbag ID parameter' });
+    // Evaluate the specified transaction with the provided facility_id.
+    const facility_id = req.body.facility_id;
+    if (!facility_id) {
+      return res.status(400).json({ error: 'Missing facility ID parameter' });
     }
 
     
-    let str=JSON.stringify(farmbag_id)
+    let str=JSON.stringify(facility_id)
     str=str.slice(1,str.length-1)
     str="FA_"+str
     
@@ -50,9 +50,10 @@ router.post('/', async (req, res) => {
     await gateway.disconnect();
     out=JSON.parse(result.toString())
 
+ 
     out1=out[0]
     if(!out1){
-      res.json({ error: 'Bag doesnt exist' });
+      res.json({ error: 'Purchase doesnt exist' });
     }
     else{
     res.json({ result:out1});

@@ -50,14 +50,15 @@ router.post('/', async (req, res) => {
     await gateway.disconnect();
     out=JSON.parse(result.toString())
 
-    out1=out[0].value.farmerBag_ids
-    console.log(out1)
+
+    out1=out[0]
     if(!out1){
-      res.json({ error: 'No bags attached' });
+      res.json({ error: 'Purchase doesnt exist' });
     }
     else{
     res.json({ result:out1});
   }
+
 
   } catch (error) {
     console.error(`Failed to evaluate transaction: ${error}`);

@@ -32,49 +32,34 @@ router.post('/', async (req, res) => {
 
         // Get the contract from the network.
         const contract = network.getContract('asctp');
-        const zfblist = req.body.zfblist;
+        const batch_id = req.body.batch_id;
 
-        if (!zfblist) {
-            return res.status(400).json({ error: 'zeroflybaglist is required in the request body' });
+        if (!batch_id) {
+            return res.status(400).json({ error: 'Batch ID is required in the request body' });
         }
         
-        for (var i=0;i<zfblist.length;i++){
-            let str =JSON.stringify(zfblist[i])
-            str=str.slice(1,str.length-1)
-            str="ZF_"+str
-            const reply = await contract.evaluateTransaction('queryByID', str);
-            const result=JSON.parse(reply.toString()) 
-            if (result.length==0){
-                return res.status(400).json({ error: 'ZeroFlyBag '+str+'does not exist' });
-            }
-            else if(result[0].value.status!="BATCHED"){
-                return res.status(400).json({ error: 'ZeroFlyBag '+str+' is not batched' });
-            }
-
+        let str =JSON.stringify(batch_id)
+        str=str.slice(1,str.length-1)
+        str="BA_"+str
+        const reply = await contract.evaluateTransaction('queryByID', str);
+        const result=JSON.parse(reply.toString()) 
+        if (result.length==0){
+            return res.status(400).json({ error: 'Batch '+str+'does not exist' });
         }
+        
 
-        for (var i=0;i<zfblist.length;i++){
-            
-            let str =JSON.stringify(zfblist[i])
-            str=str.slice(1,str.length-1)
-            str="ZF_"+str
-            const reply = await contract.evaluateTransaction('queryByID', str);
-            const result=JSON.parse(reply.toString()) 
+        const currentDate = new Date();
+        const formattedDate = currentDate.toISOString().slice(0, 19) + 'Z';
+
+        result[0].value.updated_at=formattedDate
+        result[0].value.status="COMPLETED"
+        
 
 
-            const currentDate = new Date();
-            const formattedDate = currentDate.toISOString().slice(0, 19) + 'Z';
+        await contract.submitTransaction('writeData', str, JSON.stringify(result[0].value));
+        
+        console.log('batch updated')
     
-            result[0].value.updated_at=formattedDate
-            result[0].value.status="READY"
-            
-
-
-            await contract.submitTransaction('writeData', str, JSON.stringify(result[0].value));
-            let num= (i+1).toString()
-            
-            console.log(num +' ZeroFlyBag updated')
-        }
 
         // Disconnect from the gateway.
         await gateway.disconnect();

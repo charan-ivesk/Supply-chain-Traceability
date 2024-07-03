@@ -65,9 +65,12 @@ router.post('/', async (req, res) => {
             if (result.length==0){
                 return res.status(400).json({ error: 'ZFB '+str+' does not exist' });
             }
-            else if("status" in result[0].value && result[0].value.status!="RECEIVED"){
+            else if("status" in result[0].value && result[0].value.status!="UNUSED"){
                 return res.status(400).json({ error: 'ZFB '+str+' has not been recevied or is already in use' });
             }            
+            else if("status" in result[0].value && result[0].value.facility_id!=result1[0].value.facility_id){
+                return res.status(400).json({ error: 'The bags might not be int the same facility' });
+            } 
             ZFBdata[i]=result[0]
         }
 

@@ -38,9 +38,12 @@ router.post('/', async (req, res) => {
     const transport_id = uuidv4();
     const driver_id=req.body.driver_id
     const value = req.body.value;
+    const origin_facility_id=req.body.o_facility_id
+    const destination_facility_id=req.body.d_facility_id
 
-    if (!transport_id || !value || !driver_id) {
-        return res.status(400).json({ error: 'driver_id and Value are required in the request body' });
+
+    if (!transport_id || !value || !driver_id || !destination_facility_id || !origin_facility_id) {
+        return res.status(400).json({ error: 'destination, origin, driver_id and Value are required in the request body' });
     }
 
     
@@ -70,7 +73,34 @@ router.post('/', async (req, res) => {
 
     result10[0].value.updated_at=formattedDate
     result10[0].value.status="ATTACHED"
+    value.source=origin_facility_id
+    value.destination=destination_facility_id
 
+    
+    let str1 =JSON.stringify(origin_facility_id)
+    str1=str1.slice(1,str1.length-1)
+    str1="FA_"+str1
+
+
+    const reply1 = await contract.evaluateTransaction('queryByID', str1);
+
+    const result1 =JSON.parse(reply1.toString())
+    if (result1.length==0){
+        return res.status(400).json({ error: 'Origin facility does not exist' });
+    }
+
+   
+    let str3 =JSON.stringify(origin_facility_id)
+    str3=str3.slice(1,str3.length-1)
+    str3="FA_"+str3
+    
+
+    const reply3 = await contract.evaluateTransaction('queryByID', str3);
+
+    const result3 =JSON.parse(reply3.toString())
+    if (result3.length==0){
+        return res.status(400).json({ error: 'Destination facility does not exist' });
+    }
 
     await contract.submitTransaction('writeData', str, JSON.stringify(value));
     console.log('Transport has been created');
@@ -78,11 +108,11 @@ router.post('/', async (req, res) => {
     await contract.submitTransaction('writeData', str10, JSON.stringify(result10[0].value));
     console.log('Driver has been updated');
 
-    const result = await contract.evaluateTransaction('queryAvailableZFB');
+    const result = await contract.evaluateTransaction('queryAvailableZFB', origin_facility_id);
 
     // Disconnect from the gateway.
     await gateway.disconnect();
-    res.json({ result:JSON.parse(result.toString()), "Transport ID": transport_id});
+    res.json({ result:JSON.parse(result.toString()), "transport_id": transport_id});
   } 
   catch (error) {
     console.error(`Failed to evaluate transaction: ${error}`);

@@ -64,8 +64,8 @@ router.post('/', async (req, res) => {
             if (result.length==0){
                 return res.status(400).json({ error: 'ZFB '+str+' does not exist' });
             }
-            else if("status" in result[0].value && result[0].value.status!="READY"){
-                return res.status(400).json({ error: 'ZFB '+str+' is not READY or is already in use' });
+            else if("status" in result[0].value && result[0].value.status!="BATCHED"){
+                return res.status(400).json({ error: 'ZFB '+str+' is not Batched or is already in use' });
             }            
             ZFBdata[i]=result[0]
         }
@@ -102,6 +102,7 @@ router.post('/', async (req, res) => {
     
             ZFBdata[i].value.updated_at=formattedDate
             ZFBdata[i].value.status="ATTACHED"
+
 
             await contract.submitTransaction('writeData', str, JSON.stringify(ZFBdata[i].value));
             console.log('ZFB updated')

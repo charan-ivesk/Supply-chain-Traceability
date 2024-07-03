@@ -50,6 +50,9 @@ router.post('/', async (req, res) => {
         if (result1.length==0){
             return res.status(400).json({ error: 'Batch does not exist' });
         }
+        else if("status" in result1[0].value && result1[0].value.status=="COMPLETED"){
+            return res.status(400).json({ error: 'Batch has been completed' });
+        }            
         let input1=result1[0]
 
 

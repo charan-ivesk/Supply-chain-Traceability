@@ -74,12 +74,14 @@ router.post('/', async (req, res) => {
         return res.status(400).json({ error: 'Grain'+str6+'does not exist' });
     }
 
-    await contract.submitTransaction('writeData', str, JSON.stringify(value));
-    console.log('Transaction has been submitted');
+
 
     let fac=JSON.stringify(result7[0].value.facility_id)
     fac=fac.slice(1,fac.length-1)
 
+    value.facility_id=fac
+    await contract.submitTransaction('writeData', str, JSON.stringify(value));
+    console.log('Transaction has been submitted');
     
     const result = await contract.evaluateTransaction('queryValidFB', str61,fac);
 

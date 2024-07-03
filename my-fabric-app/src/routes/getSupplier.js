@@ -42,7 +42,7 @@ router.post('/', async (req, res) => {
     
     let str=JSON.stringify(employee_id)
     str=str.slice(1,str.length-1)
-    str="EM_"+str
+    str="SP_"+str
     
     const result = await contract.evaluateTransaction('queryByID', str);
         console.log(result[0])
@@ -50,14 +50,8 @@ router.post('/', async (req, res) => {
     await gateway.disconnect();
     out=JSON.parse(result.toString())
 
-   
     out1=out[0]
-    if(!out1){
-      res.json({ error: 'Purchase doesnt exist' });
-    }
-    else{
     res.json({ result:out1});
-  }
 
   } catch (error) {
     console.error(`Failed to evaluate transaction: ${error}`);

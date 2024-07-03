@@ -32,15 +32,32 @@ router.post('/', async (req, res) => {
 
     // Get the contract from the network.
     const contract = network.getContract('asctp');
+    const facility_id = req.body.facility_id;
+    if (!facility_id) {
+      return res.status(400).json({ error: 'Missing facility ID parameter' });
+    }
+
+    
+    let str1=JSON.stringify(facility_id)
+    str1=str1.slice(1,str1.length-1)
+    let str="FA_"+str1
+    
+    const result = await contract.evaluateTransaction('queryByID', str);
+ 
+    out=JSON.parse(result.toString())
+    out1=out[0]
+    if(!out1){
+      res.json({ error: 'Purchase doesnt exist' });
+    }
 
     // Evaluate the specified transaction with the provided purchase_id.
 
-    const result = await contract.evaluateTransaction('queryAvailableZFB');
+    const result1 = await contract.evaluateTransaction('queryAvailableZFB',str1);
 
     // Disconnect from the gateway.
     await gateway.disconnect();
 
-    res.json({ result: JSON.parse(result.toString() )});
+    res.json({ result: JSON.parse(result1.toString() )});
   } catch (error) {
     console.error(`Failed to evaluate transaction: ${error}`);
     res.status(500).json({ error: 'Failed to evaluate transaction' });

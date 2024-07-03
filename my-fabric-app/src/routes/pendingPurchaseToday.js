@@ -33,32 +33,13 @@ router.post('/', async (req, res) => {
     // Get the contract from the network.
     const contract = network.getContract('asctp');
 
-    // Evaluate the specified transaction with the provided farmbag_id.
-    const employee_id = req.body.employee_id;
-    if (!employee_id) {
-      return res.status(400).json({ error: 'Missing employee ID parameter' });
-    }
+    
+    const result = await contract.evaluateTransaction('pendingPurToday');
 
-    
-    let str=JSON.stringify(employee_id)
-    str=str.slice(1,str.length-1)
-    str="EM_"+str
-    
-    const result = await contract.evaluateTransaction('queryByID', str);
-        console.log(result[0])
     // Disconnect from the gateway.
     await gateway.disconnect();
-    out=JSON.parse(result.toString())
 
-   
-    out1=out[0]
-    if(!out1){
-      res.json({ error: 'Purchase doesnt exist' });
-    }
-    else{
-    res.json({ result:out1});
-  }
-
+    res.json({ result:JSON.parse(result.toString())});
   } catch (error) {
     console.error(`Failed to evaluate transaction: ${error}`);
     res.status(500).json({ error: 'Failed to evaluate transaction' });

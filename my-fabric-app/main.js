@@ -27,7 +27,7 @@ const initiateTransportRouter = require('./src/routes/initiateTransport');
 const purchaseFarmBagAPIRouter = require('./src/routes/purchaseFarmBagAPI');
 const purchaseZeroFlyBagAPIRouter = require('./src/routes/purchaseZeroFlyBagAPI');
 const reachedZeroFlyBagsRouter = require('./src/routes/reachedZeroFlyBags');
-const readyZFBRouter = require('./src/routes/readyZFB');
+const completeBatchRouter = require('./src/routes/completeBatch');
 const receiveFarmerBagsRouter = require('./src/routes/receiveFarmerBags');
 const receiveTransportRouter = require('./src/routes/receiveTransport');
 const receiveZeroFlyBagsRouter = require('./src/routes/receiveZeroFlyBags');
@@ -37,6 +37,7 @@ const updateZFBLocationRouter = require('./src/routes/updateZFBLocation');
 const validZFBRouter = require('./src/routes/validZFB');
 const receivePurchaseRouter = require('./src/routes/receivePurchase');
 const pendingPurchaseRouter = require('./src/routes/pendingPurchase');
+const pendingPurchaseTodayRouter = require('./src/routes/pendingPurchaseToday');
 const createSupplierRouter = require('./src/routes/createSupplier');
 const updateTransportRouter = require('./src/routes/updateTransport');
 const allSuppliersRouter = require('./src/routes/allSuppliers');
@@ -56,8 +57,15 @@ const createProduceRouter = require('./src/routes/createProduce');
 const getProduceRouter = require('./src/routes/getProduce');
 const getFacilityRouter = require('./src/routes/getFacility');
 const getEmployeeRouter = require('./src/routes/getEmployee');
-
-
+const getPurchaseRouter = require('./src/routes/getPurchase');
+const allProduceRouter=require('./src/routes/allProduce')
+const getTransportRouter = require('./src/routes/getTransport');
+const allTransportRouter = require('./src/routes/allTransport');
+const allDriversRouter = require('./src/routes/allDrivers');
+const getDriverRouter = require('./src/routes/getDriver');
+const allFacilityRouter = require('./src/routes/allFacility');
+const getZFBRouter = require('./src/routes/getZFB');
+const getSupplierRouter = require('./src/routes/getSupplier');
 
 app.use('/api/addFarmBagToBatch', addFarmBagToBatchRouter);
 app.use('/api/addFarmBagToPurchase', addFarmBagToPurchaseRouter);
@@ -78,7 +86,7 @@ app.use('/api/initiateTransport', initiateTransportRouter);
 app.use('/api/purchaseFarmBagAPI', purchaseFarmBagAPIRouter);
 app.use('/api/purchaseZeroFlyBagAPI', purchaseZeroFlyBagAPIRouter);
 app.use('/api/reachedZeroFlyBags', reachedZeroFlyBagsRouter);
-app.use('/api/readyZFB', readyZFBRouter);
+app.use('/api/completeBatch', completeBatchRouter);
 app.use('/api/receiveFarmerBags', receiveFarmerBagsRouter);
 app.use('/api/receiveTransport', receiveTransportRouter);
 app.use('/api/receiveZeroFlyBags', receiveZeroFlyBagsRouter);
@@ -89,6 +97,7 @@ app.use('/api/validZFB', validZFBRouter);
 app.use('/api/getBatch', getBatchRouter);
 app.use('/api/receivePurchase', receivePurchaseRouter);
 app.use('/api/pendingPurchase', pendingPurchaseRouter);
+app.use('/api/pendingPurchaseToday', pendingPurchaseTodayRouter);
 app.use('/api/createSupplier', createSupplierRouter);
 app.use('/api/updateTransport', updateTransportRouter);
 app.use('/api/allEmployees', allEmployeesRouter);
@@ -108,7 +117,15 @@ app.use('/api/createProduce', createProduceRouter);
 app.use('/api/getProduce', getProduceRouter);
 app.use('/api/getFacility', getFacilityRouter);
 app.use('/api/getEmployee', getEmployeeRouter);
-
+app.use('/api/getPurchase', getPurchaseRouter);
+app.use('/api/allProduce', allProduceRouter);
+app.use('/api/getTransport', getTransportRouter);
+app.use('/api/allTransport', allTransportRouter);
+app.use('/api/allDrivers', allDriversRouter);
+app.use('/api/getDriver', getDriverRouter);
+app.use('/api/allFacility', allFacilityRouter);
+app.use('/api/getZFB', getZFBRouter);
+app.use('/api/getSupplier', getSupplierRouter);
 
 
 

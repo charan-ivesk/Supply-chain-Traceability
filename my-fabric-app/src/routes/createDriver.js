@@ -58,7 +58,7 @@ router.post('/', async (req, res) => {
     // Disconnect from the gateway.
     await gateway.disconnect();
     res.json({ message: 'Transaction submitted successfully',
-      "Driver ID":driver_id
+      "driver_id":driver_id
     });
   } 
   catch (error) {

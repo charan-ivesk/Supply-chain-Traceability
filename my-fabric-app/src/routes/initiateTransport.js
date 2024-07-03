@@ -67,7 +67,7 @@ router.post('/', async (req, res) => {
     
             result[0].value.updated_at=formattedDate
             result[0].value.status="INITIATED"
-            
+            let facility_id=result[0].value.destination
 
 
             await contract.submitTransaction('writeData', str, JSON.stringify(result[0].value));
@@ -88,6 +88,7 @@ router.post('/', async (req, res) => {
         
                 result[0].value.updated_at=formattedDate
                 result[0].value.status="INITIATED"
+                ZFBdata[i].value.nextDestination=facility_id
 
     
                 await contract.submitTransaction('writeData', str, JSON.stringify(result[0].value));

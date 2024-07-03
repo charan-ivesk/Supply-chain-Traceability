@@ -4,7 +4,7 @@ const fs = require('fs');
 const express = require('express');
 const router = express.Router();
 
-router.post('/', async (req, res) => { 
+router.post('/', async (req, res) => {
   try {
     // load the network configuration
     const ccpPath = path.resolve(__dirname, '..','..', '..', 'test-network', 'organizations', 'peerOrganizations', 'org1.example.com', 'connection-org1.json');
@@ -33,32 +33,15 @@ router.post('/', async (req, res) => {
     // Get the contract from the network.
     const contract = network.getContract('asctp');
 
-    // Evaluate the specified transaction with the provided farmbag_id.
-    const employee_id = req.body.employee_id;
-    if (!employee_id) {
-      return res.status(400).json({ error: 'Missing employee ID parameter' });
-    }
+    // Evaluate the specified transaction with the provided purchase_id.
 
-    
-    let str=JSON.stringify(employee_id)
-    str=str.slice(1,str.length-1)
-    str="EM_"+str
-    
-    const result = await contract.evaluateTransaction('queryByID', str);
-        console.log(result[0])
+    const result = await contract.evaluateTransaction('queryAllDrivers');
+
+
     // Disconnect from the gateway.
     await gateway.disconnect();
-    out=JSON.parse(result.toString())
 
-   
-    out1=out[0]
-    if(!out1){
-      res.json({ error: 'Purchase doesnt exist' });
-    }
-    else{
-    res.json({ result:out1});
-  }
-
+    res.json({ result: JSON.parse(result.toString() )});
   } catch (error) {
     console.error(`Failed to evaluate transaction: ${error}`);
     res.status(500).json({ error: 'Failed to evaluate transaction' });

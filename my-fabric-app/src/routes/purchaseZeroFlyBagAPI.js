@@ -34,10 +34,11 @@ router.post('/', async (req, res) => {
         const contract = network.getContract('asctp');
 
         const zeroflybag_id = req.body.zeroflybag_id;
+        const employee_id=req.body.employee_id;
         const value = req.body.value;
 
-        if (!zeroflybag_id || !value) {
-            return res.status(400).json({ error: 'zeroflybag_id and Value are required in the request body' });
+        if (!zeroflybag_id || !value || !employee_id) {
+            return res.status(400).json({ error: 'zeroflybag_id employee_id and Value are required in the request body' });
         }
 
         let str=JSON.stringify(zeroflybag_id)
@@ -50,6 +51,23 @@ router.post('/', async (req, res) => {
         value.created_at=formattedDate
         value.status="UNUSED"
         value.history=[]
+
+        let str7 =JSON.stringify(employee_id)
+        str7=str7.slice(1,str7.length-1)
+        str7="EM_"+str7
+        const reply7= await contract.evaluateTransaction('queryByID', str7);
+        const result7=JSON.parse(reply7.toString()) 
+        if (result7.length==0){
+            return res.status(400).json({ error: 'Employee'+str7+'does not exist' });
+        }
+        else if("status" in result7[0].value && result7[0].value.status=="DEACTIVATED"){
+            return res.status(400).json({ error: 'employee '+str7+' has been deactivated' });
+        } 
+
+        let fac=JSON.stringify(result7[0].value.facility_id)
+        fac=fac.slice(1,fac.length-1)
+
+        value.facility_id=fac
 
         const result = await contract.evaluateTransaction('queryByID', str);
         let check=result.toString()

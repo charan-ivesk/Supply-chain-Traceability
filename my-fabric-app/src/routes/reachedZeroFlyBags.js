@@ -67,6 +67,7 @@ router.post('/', async (req, res) => {
     
             result[0].value.updated_at=formattedDate
             result[0].value.status="REACHED"
+            result[0].value.facility_id=result[0].value.nextDestination
             
 
 

@@ -58,20 +58,21 @@ class ASCTP extends Contract {
             "_id": {
                 "$regex": "ZF_"
              },
-            "status":"RECEIVED"
+            "status":"UNUSED"
         }
         let iterator = await ctx.stub.getQueryResult(JSON.stringify(queryString))
         let result = await this.getIteratorData(iterator)
         return result
      }
     
-    async queryAvailableZFB(ctx){
+    async queryAvailableZFB(ctx, facility_id){
         let queryString ={}
         queryString.selector={
             "_id": {
                 "$regex": "ZF_"
              },
-            "status":"READY"
+            "status":"BATCHED",
+            "facility_id":facility_id
         }
         let iterator = await ctx.stub.getQueryResult(JSON.stringify(queryString))
         let result = await this.getIteratorData(iterator)
@@ -98,6 +99,29 @@ class ASCTP extends Contract {
                 "$regex": "PU_"
              },
             "status":"CREATED"
+        }
+        let iterator = await ctx.stub.getQueryResult(JSON.stringify(queryString))
+        let result = await this.getIteratorData(iterator)
+        return result
+     }    
+
+     async pendingPurToday(ctx){
+        const today = new Date();
+        const yyyy = today.getUTCFullYear();
+        const mm = String(today.getUTCMonth() + 1).padStart(2, '0'); // Months are zero-based
+        const dd = String(today.getUTCDate()).padStart(2, '0');
+        const todayStart = `${yyyy}-${mm}-${dd}T00:00:00Z`;
+        const tomorrowStart = `${yyyy}-${mm}-${String(today.getUTCDate() + 1).padStart(2, '0')}T00:00:00Z`;
+        const check = `${yyyy}-${mm}-${dd}T07:30:00Z`;
+        let queryString ={}
+        queryString.selector={
+            "_id": {
+                "$regex": "PU_"
+             },
+            "status":"CREATED",
+            "created_at": {
+                    "$gte": todayStart,
+                    "$lt": tomorrowStart}
         }
         let iterator = await ctx.stub.getQueryResult(JSON.stringify(queryString))
         let result = await this.getIteratorData(iterator)
@@ -211,6 +235,28 @@ class ASCTP extends Contract {
         let queryString ={}
         queryString.selector={      "_id": {
             "$regex": "BA_"
+            }}
+        let iterator = await ctx.stub.getQueryResult(JSON.stringify(queryString))
+        let result = await this.getIteratorData(iterator)
+
+        return result
+        }   
+
+    async queryAllProduce(ctx){
+        let queryString ={}
+        queryString.selector={      "_id": {
+            "$regex": "PD_"
+            }}
+        let iterator = await ctx.stub.getQueryResult(JSON.stringify(queryString))
+        let result = await this.getIteratorData(iterator)
+
+        return result
+        }   
+
+    async queryAllFacility(ctx){
+        let queryString ={}
+        queryString.selector={      "_id": {
+            "$regex": "FA_"
             }}
         let iterator = await ctx.stub.getQueryResult(JSON.stringify(queryString))
         let result = await this.getIteratorData(iterator)
