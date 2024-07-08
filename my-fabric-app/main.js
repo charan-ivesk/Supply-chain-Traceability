@@ -23,7 +23,7 @@ const createTransportRouter = require('./src/routes/createTransport');
 const getAllReadyZFBsRouter = require('./src/routes/getAllReadyZFBs');
 const getBatchRouter = require('./src/routes/getBatch');
 const getBagsinPurchaseRouter = require('./src/routes/getBagsinPurchase');
-const initiateTransportRouter = require('./src/routes/initiateTransport');
+const initiateTransportZFBRouter = require('./src/routes/initiateTransportZFB');
 const purchaseFarmBagAPIRouter = require('./src/routes/purchaseFarmBagAPI');
 const purchaseZeroFlyBagAPIRouter = require('./src/routes/purchaseZeroFlyBagAPI');
 const reachedZeroFlyBagsRouter = require('./src/routes/reachedZeroFlyBags');
@@ -66,6 +66,8 @@ const getDriverRouter = require('./src/routes/getDriver');
 const allFacilityRouter = require('./src/routes/allFacility');
 const getZFBRouter = require('./src/routes/getZFB');
 const getSupplierRouter = require('./src/routes/getSupplier');
+const addFBToTransportRouter = require('./src/routes/addFBToTransport');
+const initiateTransportFBRouter= require('./src/routes/initiateTransportFB');
 
 app.use('/api/addFarmBagToBatch', addFarmBagToBatchRouter);
 app.use('/api/addFarmBagToPurchase', addFarmBagToPurchaseRouter);
@@ -82,7 +84,7 @@ app.use('/api/createPurchaseAPI', createPurchaseAPIRouter);
 app.use('/api/createTransport', createTransportRouter);
 app.use('/api/getAllReadyZFBs', getAllReadyZFBsRouter);
 app.use('/api/getBagsinPurchase', getBagsinPurchaseRouter);
-app.use('/api/initiateTransport', initiateTransportRouter);
+app.use('/api/initiateTransportZFB', initiateTransportZFBRouter);
 app.use('/api/purchaseFarmBagAPI', purchaseFarmBagAPIRouter);
 app.use('/api/purchaseZeroFlyBagAPI', purchaseZeroFlyBagAPIRouter);
 app.use('/api/reachedZeroFlyBags', reachedZeroFlyBagsRouter);
@@ -126,7 +128,8 @@ app.use('/api/getDriver', getDriverRouter);
 app.use('/api/allFacility', allFacilityRouter);
 app.use('/api/getZFB', getZFBRouter);
 app.use('/api/getSupplier', getSupplierRouter);
-
+app.use('/api/addFBToTransport', addFBToTransportRouter);
+app.use('/api/initiateTransportFB', initiateTransportFBRouter);
 
 
 app.listen(port, () => {
