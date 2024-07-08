@@ -49,7 +49,7 @@ router.post('/', async (req, res) => {
             if (result.length==0){
                 return res.status(400).json({ error: 'FarmerBag '+str+'does not exist' });
             }
-            else if(result[0].value.status!="PURCHASED"){
+            else if(result[0].value.status!="PURCHASED" && result[0].value.status!="INITIATED"){
                 return res.status(400).json({ error: 'FarmerBag '+str+' has not been purchased or is already in use' });
             }
 

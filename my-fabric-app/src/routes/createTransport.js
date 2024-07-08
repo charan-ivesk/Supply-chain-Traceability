@@ -73,6 +73,7 @@ router.post('/', async (req, res) => {
 
     result10[0].value.updated_at=formattedDate
     result10[0].value.status="ATTACHED"
+    result10[0].value.currTransport=transport_id
     value.source=origin_facility_id
     value.destination=destination_facility_id
 

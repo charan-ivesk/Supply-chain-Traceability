@@ -69,6 +69,17 @@ router.post('/', async (req, res) => {
             result[0].value.status="REACHED"
             
 
+            let driver_id=result[0].value.driver_id
+
+            let str10=JSON.stringify(driver_id)
+            str10=str10.slice(1,str10.length-1)
+            str10="DR_"+str10
+            
+            const reply10 = await contract.evaluateTransaction('queryByID', str10);
+            const result10=JSON.parse(reply10.toString())
+
+            result10[0].value.status="AVAILABLE"
+            result10[0].value.currTransport="none"
 
             await contract.submitTransaction('writeData', str, JSON.stringify(result[0].value));
             let num= (i+1).toString()

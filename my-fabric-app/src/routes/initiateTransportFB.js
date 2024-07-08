@@ -75,9 +75,9 @@ router.post('/', async (req, res) => {
             
             console.log(num +' Transport updated')
 
-            let ZFBlist = result[0].value.zeroFlyBag_ids
-            for (var j=0;j<ZFBlist.length;j++){
-                let str =JSON.stringify(ZFBlist[j])
+            let FBlist = result[0].value.farmBag_ids
+            for (var j=0;j<FBlist.length;j++){
+                let str =JSON.stringify(FBlist[j])
                 str=str.slice(1,str.length-1)
                 str="FB_"+str
                 const reply = await contract.evaluateTransaction('queryByID', str);
@@ -88,7 +88,7 @@ router.post('/', async (req, res) => {
         
                 result[0].value.updated_at=formattedDate
                 result[0].value.status="INITIATED"
-                ZFBdata[i].value.nextDestination=facility_id
+                FBdata[i].value.nextDestination=facility_id
 
     
                 await contract.submitTransaction('writeData', str, JSON.stringify(result[0].value));
