@@ -91,7 +91,7 @@ router.post('/', async (req, res) => {
     }
 
    
-    let str3 =JSON.stringify(origin_facility_id)
+    let str3 =JSON.stringify(destination_facility_id)
     str3=str3.slice(1,str3.length-1)
     str3="FA_"+str3
     

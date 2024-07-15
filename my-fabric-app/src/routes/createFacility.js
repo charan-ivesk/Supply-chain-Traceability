@@ -35,11 +35,11 @@ router.post('/', async (req, res) => {
 
     // Evaluate the specified transaction with the provided purchase_id.
     const { v4: uuidv4 } = require('uuid');
-    const facility_id = uuidv4();
+    const facility_id = req.body.facility_id
     const value = req.body.value;
 
-    if (!value) {
-        return res.status(400).json({ error: 'Value is required in the request body' });
+    if (!value || !facility_id) {
+        return res.status(400).json({ error: 'Facility Id and Vallue are required in the request body' });
     }
 
     let str=JSON.stringify(facility_id)

@@ -78,7 +78,32 @@ router.post('/', async (req, res) => {
 
             const currentDate = new Date();
             const formattedDate = currentDate.toISOString().slice(0, 19) + 'Z';
-    
+
+            if(result[0].value.status=="PURCHASED"){
+                let str3 =JSON.stringify(result[0].value.purchase_id)
+                str3=str3.slice(1,str3.length-1)
+                str3="PU_"+str3
+
+                const reply1 = await contract.evaluateTransaction('queryByID', str3);
+
+                const result1 =JSON.parse(reply1.toString())
+                let input1=result1[0]
+                let con_FBList=input1.value.farmerBag_ids_check
+                con_FBList=con_FBList.filter(item=>item !==farmbaglist[i])
+                if (con_FBList.length ==0){
+                    input1.value.status="RECEIVED"
+                    delete input1.value.farmerBag_ids_check
+                }
+                else{input1.value.farmerBag_ids_check=con_FBList}
+
+
+                await contract.submitTransaction('writeData', str3, JSON.stringify(input1.value));
+            }
+
+
+
+
+
             result[0].value.updated_at=formattedDate
             result[0].value.status="RECEIVED"
             purchase_id=result[0].value.purchase_id
@@ -88,25 +113,10 @@ router.post('/', async (req, res) => {
             let num= (i+1).toString()
             
             console.log(num +' FarmerBag updated')
+            
+            
 
-            let str3 =JSON.stringify(purchase_id)
-            str3=str3.slice(1,str3.length-1)
-            str3="PU_"+str3
-      
-            const reply1 = await contract.evaluateTransaction('queryByID', str3);
-    
-            const result1 =JSON.parse(reply1.toString())
-            let input1=result1[0]
-            let con_FBList=input1.value.farmerBag_ids_check
-            con_FBList=con_FBList.filter(item=>item !==farmbaglist[i])
-            if (con_FBList.length ==0){
-                input1.value.status="RECEIVED"
-                delete input1.value.farmerBag_ids_check
-            }
-            else{input1.value.farmerBag_ids_check=con_FBList}
-
-
-            await contract.submitTransaction('writeData', str3, JSON.stringify(input1.value));
+            
 
         }
 

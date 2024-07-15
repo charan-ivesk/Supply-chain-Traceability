@@ -105,6 +105,26 @@ class ASCTP extends Contract {
         return result
      }    
 
+
+     async uniquePur(ctx, produce_id,supplier_id){
+        let queryString ={}
+        queryString.selector= {
+            "_id": {
+                "$regex": "PU_"
+            },
+            "created_at": {
+                "$regex": `${formattedDate}.*`
+            },
+            "supplier_id": supplierId,
+            "produce_id": produceId
+        }
+
+        let iterator = await ctx.stub.getQueryResult(JSON.stringify(queryString))
+        let result = await this.getIteratorData(iterator)
+        return result
+     }  
+
+
      async pendingPurToday(ctx){
         const today = new Date();
         const yyyy = today.getUTCFullYear();
@@ -112,7 +132,6 @@ class ASCTP extends Contract {
         const dd = String(today.getUTCDate()).padStart(2, '0');
         const todayStart = `${yyyy}-${mm}-${dd}T00:00:00Z`;
         const tomorrowStart = `${yyyy}-${mm}-${String(today.getUTCDate() + 1).padStart(2, '0')}T00:00:00Z`;
-        const check = `${yyyy}-${mm}-${dd}T07:30:00Z`;
         let queryString ={}
         queryString.selector={
             "_id": {

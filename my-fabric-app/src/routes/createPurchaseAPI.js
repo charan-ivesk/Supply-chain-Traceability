@@ -44,8 +44,17 @@ router.post('/', async (req, res) => {
             return res.status(400).json({ error: 'supplier_id, produce_id and Value are required in the request body' });
         }
 
+
+        const result = await contract.evaluateTransaction('uniquePur', produce_id, supplier_id);
+        const existingPurchases = JSON.parse(result.toString());
+        
+        if (existingPurchases.length > 0) {
+            return res.status(400).json({ error: 'A purchase with the same supplier and produce ID has already been made today.' });
+        }
+
         let str=JSON.stringify(purchase_id)
         str=str.slice(1,str.length-1)
+       
         str="PU_"+str
 
         let str1 =JSON.stringify(supplier_id)
@@ -59,11 +68,6 @@ router.post('/', async (req, res) => {
             return res.status(400).json({ error: 'Supplier does not exist' });
         }
 
-        let input1=result1[0]
-
-        if(input1.value.status=="DEACTIVATED"){
-            return res.status(400).json({ error: 'Supplier has been deactivated' });
-        }
 
         let str4 =JSON.stringify(produce_id)
         str4=str4.slice(1,str4.length-1)
@@ -77,6 +81,8 @@ router.post('/', async (req, res) => {
         if (result4.length==0){
             return res.status(400).json({ error: 'produce does not exist' });
         }
+
+
 
         const currentDate = new Date();
         const formattedDate = currentDate.toISOString().slice(0, 19) + 'Z';

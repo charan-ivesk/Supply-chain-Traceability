@@ -32,71 +32,65 @@ router.post('/', async (req, res) => {
 
         // Get the contract from the network.
         const contract = network.getContract('asctp');
-        const transportList = req.body.trslist;
+        const transport_id = req.body.trs_id;
+        const origin_facility_id=req.body.o_facility_id
+        const destination_facility_id=req.body.d_facility_id
 
-        if (!transportList) {
-            return res.status(400).json({ error: 'Transportlist is required in the request body' });
+
+        if (!transport_id|| !destination_facility_id || !origin_facility_id) {
+            return res.status(400).json({ error: 'Transport_id origin and destination are required in the request body' });
         }
         
-        for (var i=0;i<transportList.length;i++){
-            let str =JSON.stringify(transportList[i])
-            str=str.slice(1,str.length-1)
-            str="TR_"+str
-            const reply = await contract.evaluateTransaction('queryByID', str);
-            const result=JSON.parse(reply.toString()) 
-            if (result.length==0){
-                return res.status(400).json({ error: 'Transport '+str+'does not exist' });
-            }
-            else if(result[0].value.status!="ATTACHED"){
-                return res.status(400).json({ error: 'Transport '+str+' is empty' });
-            }
 
+        let str =JSON.stringify(transport_id)
+        str=str.slice(1,str.length-1)
+        str="TR_"+str
+        const reply = await contract.evaluateTransaction('queryByID', str);
+        const result=JSON.parse(reply.toString()) 
+        if (result.length==0){
+            return res.status(400).json({ error: 'Transport '+str+'does not exist' });
+        }
+        else if(result[0].value.status!="ATTACHED"){
+            return res.status(400).json({ error: 'Transport '+str+' is empty' });
         }
 
-        for (var i=0;i<transportList.length;i++){
-            
-            let str =JSON.stringify(transportList[i])
+
+        const currentDate = new Date();
+        const formattedDate = currentDate.toISOString().slice(0, 19) + 'Z';
+
+        result[0].value.updated_at=formattedDate
+        result[0].value.status="INITIATED"
+        result[0].value.source=origin_facility_id
+        result[0].value.destination=destination_facility_id
+        let facility_id=result[0].value.destination
+
+
+        await contract.submitTransaction('writeData', str, JSON.stringify(result[0].value));
+
+        
+        console.log(' Transport updated')
+        
+        let ZFBlist = result[0].value.zeroFlyBag_ids
+        for (var j=0;j<ZFBlist.length;j++){
+            let str =JSON.stringify(ZFBlist[j])
             str=str.slice(1,str.length-1)
-            str="TR_"+str
+            str="ZF_"+str
             const reply = await contract.evaluateTransaction('queryByID', str);
             const result=JSON.parse(reply.toString()) 
-
 
             const currentDate = new Date();
             const formattedDate = currentDate.toISOString().slice(0, 19) + 'Z';
     
             result[0].value.updated_at=formattedDate
             result[0].value.status="INITIATED"
-            let facility_id=result[0].value.destination
+            result[0].value.nextDestination=facility_id
 
-
+    
             await contract.submitTransaction('writeData', str, JSON.stringify(result[0].value));
-            let num= (i+1).toString()
+            let num= (j+1).toString()
             
-            console.log(num +' Transport updated')
-
-            let ZFBlist = result[0].value.zeroFlyBag_ids
-            for (var j=0;j<ZFBlist.length;j++){
-                let str =JSON.stringify(ZFBlist[j])
-                str=str.slice(1,str.length-1)
-                str="ZF_"+str
-                const reply = await contract.evaluateTransaction('queryByID', str);
-                const result=JSON.parse(reply.toString()) 
-    
-                const currentDate = new Date();
-                const formattedDate = currentDate.toISOString().slice(0, 19) + 'Z';
-        
-                result[0].value.updated_at=formattedDate
-                result[0].value.status="INITIATED"
-                ZFBdata[i].value.nextDestination=facility_id
-
-    
-                await contract.submitTransaction('writeData', str, JSON.stringify(result[0].value));
-                let num= (j+1).toString()
-                
-                console.log(num +' ZeroFlyBag Updated')
+            console.log(num +' ZeroFlyBag Updated')
             }
-        }
 
         // Disconnect from the gateway.
         await gateway.disconnect();

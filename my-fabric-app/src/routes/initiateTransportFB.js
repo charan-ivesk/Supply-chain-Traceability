@@ -32,71 +32,91 @@ router.post('/', async (req, res) => {
 
         // Get the contract from the network.
         const contract = network.getContract('asctp');
-        const transportList = req.body.trslist;
+        const transport_id = req.body.trs_id;
+        const origin_facility_id=req.body.o_facility_id
+        const destination_facility_id=req.body.d_facility_id
 
-        if (!transportList) {
-            return res.status(400).json({ error: 'Transportlist is required in the request body' });
+
+        if (!transport_id|| !destination_facility_id || !origin_facility_id) {
+            return res.status(400).json({ error: 'Transport_id origin and destination are required in the request body' });
         }
         
-        for (var i=0;i<transportList.length;i++){
-            let str =JSON.stringify(transportList[i])
-            str=str.slice(1,str.length-1)
-            str="TR_"+str
-            const reply = await contract.evaluateTransaction('queryByID', str);
-            const result=JSON.parse(reply.toString()) 
-            if (result.length==0){
-                return res.status(400).json({ error: 'Transport '+str+'does not exist' });
-            }
-            else if(result[0].value.status!="ATTACHED"){
-                return res.status(400).json({ error: 'Transport '+str+' is empty' });
-            }
 
+        let str =JSON.stringify(transport_id)
+        str=str.slice(1,str.length-1)
+        str="TR_"+str
+        const reply = await contract.evaluateTransaction('queryByID', str);
+        const result=JSON.parse(reply.toString()) 
+        if (result.length==0){
+            return res.status(400).json({ error: 'Transport '+str+'does not exist' });
+        }
+        else if(result[0].value.status!="ATTACHED"){
+            return res.status(400).json({ error: 'Transport '+str+' is empty' });
         }
 
-        for (var i=0;i<transportList.length;i++){
-            
-            let str =JSON.stringify(transportList[i])
-            str=str.slice(1,str.length-1)
-            str="TR_"+str
-            const reply = await contract.evaluateTransaction('queryByID', str);
-            const result=JSON.parse(reply.toString()) 
+        let str1 =JSON.stringify(origin_facility_id)
+        str1=str1.slice(1,str1.length-1)
+        str1="FA_"+str1
+    
+    
+        const reply1 = await contract.evaluateTransaction('queryByID', str1);
+    
+        const result1 =JSON.parse(reply1.toString())
+        if (result1.length==0){
+            return res.status(400).json({ error: 'Origin facility does not exist' });
+        }
+    
+       
+        let str3 =JSON.stringify(destination_facility_id)
+        str3=str3.slice(1,str3.length-1)
+        str3="FA_"+str3
+        
+    
+        const reply3 = await contract.evaluateTransaction('queryByID', str3);
+    
+        const result3 =JSON.parse(reply3.toString())
+        if (result3.length==0){
+            return res.status(400).json({ error: 'Destination facility does not exist' });
+        }
 
+
+        const currentDate = new Date();
+        const formattedDate = currentDate.toISOString().slice(0, 19) + 'Z';
+
+        result[0].value.updated_at=formattedDate
+        result[0].value.status="INITIATED"
+        result[0].value.source=origin_facility_id
+        result[0].value.destination=destination_facility_id
+        let facility_id=result[0].value.destination
+
+
+        await contract.submitTransaction('writeData', str, JSON.stringify(result[0].value));
+
+        
+        console.log(' Transport updated')
+
+        let FBlist = result[0].value.farmBag_ids
+        for (var j=0;j<FBlist.length;j++){
+            let str7 =JSON.str7ingify(FBlist[j])
+            str7=str7.slice(1,str7.length-1)
+            str7="FB_"+str7
+            const reply = await contract.evaluateTransaction('queryByID', str7);
+            const result=JSON.parse(reply.toString()) 
 
             const currentDate = new Date();
             const formattedDate = currentDate.toISOString().slice(0, 19) + 'Z';
     
             result[0].value.updated_at=formattedDate
             result[0].value.status="INITIATED"
-            let facility_id=result[0].value.destination
+            result[0].value.nextDestination=facility_id
 
 
-            await contract.submitTransaction('writeData', str, JSON.stringify(result[0].value));
-            let num= (i+1).toString()
+            await contract.submitTransaction('writeData', str7, JSON.stringify(result[0].value));
+            let num= (j+1).toString()
             
-            console.log(num +' Transport updated')
-
-            let FBlist = result[0].value.farmBag_ids
-            for (var j=0;j<FBlist.length;j++){
-                let str =JSON.stringify(FBlist[j])
-                str=str.slice(1,str.length-1)
-                str="FB_"+str
-                const reply = await contract.evaluateTransaction('queryByID', str);
-                const result=JSON.parse(reply.toString()) 
-    
-                const currentDate = new Date();
-                const formattedDate = currentDate.toISOString().slice(0, 19) + 'Z';
-        
-                result[0].value.updated_at=formattedDate
-                result[0].value.status="INITIATED"
-                FBdata[i].value.nextDestination=facility_id
-
-    
-                await contract.submitTransaction('writeData', str, JSON.stringify(result[0].value));
-                let num= (j+1).toString()
-                
-                console.log(num +' FarmBag Updated')
-            }
+            console.log(num +' FarmBag Updated')
         }
+        
 
         // Disconnect from the gateway.
         await gateway.disconnect();

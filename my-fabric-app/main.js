@@ -68,6 +68,8 @@ const getZFBRouter = require('./src/routes/getZFB');
 const getSupplierRouter = require('./src/routes/getSupplier');
 const addFBToTransportRouter = require('./src/routes/addFBToTransport');
 const initiateTransportFBRouter= require('./src/routes/initiateTransportFB');
+const getValidFBRouter= require('./src/routes/getValidFB');
+
 
 app.use('/api/addFarmBagToBatch', addFarmBagToBatchRouter);
 app.use('/api/addFarmBagToPurchase', addFarmBagToPurchaseRouter);
@@ -130,6 +132,7 @@ app.use('/api/getZFB', getZFBRouter);
 app.use('/api/getSupplier', getSupplierRouter);
 app.use('/api/addFBToTransport', addFBToTransportRouter);
 app.use('/api/initiateTransportFB', initiateTransportFBRouter);
+app.use('/api/getValidFB', getValidFBRouter);
 
 
 app.listen(port, () => {
