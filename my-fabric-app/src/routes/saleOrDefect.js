@@ -36,6 +36,7 @@ router.post('/', async (req, res) => {
     // Evaluate the specified transaction with the provided purchase_id.
     const zfbid = req.body.zfb_id;
       const statusOfZFB= req.body.status
+      const notes = req.body.notes
 
       if (!zfbid || !statusOfZFB) {
           return res.status(400).json({ error: 'Zeroflybag and Status are required in the request body' });
@@ -59,6 +60,7 @@ router.post('/', async (req, res) => {
 
       result[0].value.updated_at=formattedDate
       result[0].value.status=statusOfZFB
+      
 
 
       if(statusOfZFB=="DEFECT"){
@@ -70,7 +72,9 @@ router.post('/', async (req, res) => {
         const reply1 = await contract.evaluateTransaction('queryByID', str1);
         const result1=JSON.parse(reply1.toString())
 
-
+        if(notes){
+          result[0].value.notes=notes
+        }
 
         output.ZFB_id=result[0].id
         console.log(output)
