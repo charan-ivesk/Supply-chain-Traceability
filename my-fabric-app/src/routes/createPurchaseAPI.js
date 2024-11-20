@@ -85,8 +85,8 @@ router.post('/', async (req, res) => {
 
 
         const currentDate = new Date();
-        const formattedDate = currentDate.toISOString().slice(0, 19) + 'Z';
-        value.created_at=formattedDate
+        // const formattedDate = currentDate.toISOString().slice(0, 19) + 'Z';
+        // value.created_at=formattedDate
 
         if (input1.value.hasOwnProperty("purchase_ids")) {
             let temp=input1.value.purchase_ids.concat([purchase_id])
